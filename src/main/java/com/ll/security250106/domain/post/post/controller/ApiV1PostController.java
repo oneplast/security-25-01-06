@@ -10,6 +10,7 @@ import com.ll.security250106.global.rq.Rq;
 import com.ll.security250106.global.rsData.RsData;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import java.security.Principal;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.transaction.annotation.Transactional;
@@ -86,8 +87,12 @@ public class ApiV1PostController {
 
     @PostMapping
     @Transactional
-    public RsData<PostWithContentDto> write(@RequestBody @Valid PostWriteReqBody reqBody) {
+    public RsData<PostWithContentDto> write(@RequestBody @Valid PostWriteReqBody reqBody, Principal principal) {
         Member actor = rq.checkAuthentication();
+
+        if (principal != null) {
+            actor = rq.getActorByUsername(principal.getName());
+        }
 
         Post post = this.postService.write(actor, reqBody.title, reqBody.content, reqBody.published, reqBody.listed);
 
