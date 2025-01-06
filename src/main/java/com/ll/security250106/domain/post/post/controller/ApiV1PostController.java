@@ -10,10 +10,9 @@ import com.ll.security250106.global.rq.Rq;
 import com.ll.security250106.global.rsData.RsData;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
-import java.security.Principal;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.Length;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -89,12 +88,13 @@ public class ApiV1PostController {
 
     @PostMapping
     @Transactional
-    public RsData<PostWithContentDto> write(@RequestBody @Valid PostWriteReqBody reqBody, Principal principal) {
+    public RsData<PostWithContentDto> write(@RequestBody @Valid PostWriteReqBody reqBody,
+                                            @AuthenticationPrincipal UserDetails user) {
         Member actor = rq.checkAuthentication();
 
-        if (principal != null) {
-            Authentication authentication = (Authentication) principal;
-            UserDetails user = (UserDetails) authentication.getPrincipal();
+        if (user != null) {
+//            Authentication authentication = (Authentication) principal;
+//            UserDetails user = (UserDetails) authentication.getPrincipal();
             actor = rq.getActorByUsername(user.getUsername());
         }
 
