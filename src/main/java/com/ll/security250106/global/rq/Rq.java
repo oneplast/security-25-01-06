@@ -5,8 +5,14 @@ import com.ll.security250106.domain.member.member.service.MemberService;
 import com.ll.security250106.global.exceptions.ServiceException;
 import com.ll.security250106.util.Ut;
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.RequestScope;
 
@@ -39,5 +45,17 @@ public class Rq {
 
     public Member getActorByUsername(String username) {
         return memberService.findByUsername(username).get();
+    }
+
+    // 스프링 시큐리티가 이해하는 방식으로 강제 로그인 처리
+    // 임시
+    public void setLogin(String username) {
+        UserDetails user = new User(username, "", List.of());
+
+        Authentication authentication = new UsernamePasswordAuthenticationToken(
+                user, user.getPassword(), user.getAuthorities()
+        );
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 }
