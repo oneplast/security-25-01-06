@@ -12,14 +12,19 @@ public class SecurityConfig {
     SecurityFilterChain baseSecurityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authorizeRequests ->
-                        authorizeRequests.requestMatchers(HttpMethod.GET,
+                        authorizeRequests
+                                .requestMatchers("/h2-console/**")
+                                .permitAll()
+                                .requestMatchers(HttpMethod.GET,
                                         "/api/*/posts",
                                         "/api/*/posts/{id:\\d+}",
                                         "/api/*/posts/{postId:\\d+}/comments")
                                 .permitAll()
                                 .anyRequest()
                                 .authenticated()
-                );
+                )
+                .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.sameOrigin()))
+                .csrf(csrf -> csrf.disable());
 
         return http.build();
     }
