@@ -13,6 +13,8 @@ import jakarta.validation.constraints.NotBlank;
 import java.security.Principal;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -91,7 +93,9 @@ public class ApiV1PostController {
         Member actor = rq.checkAuthentication();
 
         if (principal != null) {
-            actor = rq.getActorByUsername(principal.getName());
+            Authentication authentication = (Authentication) principal;
+            UserDetails user = (UserDetails) authentication.getPrincipal();
+            actor = rq.getActorByUsername(user.getUsername());
         }
 
         Post post = this.postService.write(actor, reqBody.title, reqBody.content, reqBody.published, reqBody.listed);
