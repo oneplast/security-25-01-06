@@ -1,5 +1,7 @@
 package com.ll.security250106.global.security;
 
+import com.ll.security250106.global.rsData.RsData;
+import com.ll.security250106.util.Ut;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -35,7 +37,20 @@ public class SecurityConfig {
                 )
                 .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.sameOrigin()))
                 .csrf(csrf -> csrf.disable())
-                .addFilterBefore(customAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(customAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling(exceptionHandling -> exceptionHandling
+                        .authenticationEntryPoint(
+                                (request, response, authException) -> {
+                                    response.setContentType("application/json;charset=UTF-8");
+                                    response.getWriter().write(
+                                            Ut.json.toString(
+                                                    new RsData<>("403-1", request.getRequestURI() + ", " +
+                                                            authException.getLocalizedMessage())
+                                            )
+                                    );
+                                }
+                        ))
+        ;
 
         return http.build();
     }
