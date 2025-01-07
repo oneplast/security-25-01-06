@@ -49,7 +49,7 @@ public class ApiV1PostCommentController {
     @DeleteMapping("/{id}")
     @Transactional
     public RsData<Void> delete(@PathVariable long postId, @PathVariable long id) {
-        Member actor = rq.checkAuthentication();
+        Member actor = rq.getActor();
 
         Post post = postService.findById(postId).orElseThrow(
                 () -> new ServiceException("404-1", "%d번 글은 존재하지 않습니다.".formatted(postId))
@@ -80,7 +80,7 @@ public class ApiV1PostCommentController {
     @Transactional
     public RsData<PostCommentDto> modify(@PathVariable long postId, @PathVariable long id,
                                          @RequestBody @Valid PostCommentModifyReqBody reqBody) {
-        Member actor = rq.checkAuthentication();
+        Member actor = rq.getActor();
 
         Post post = postService.findById(postId).orElseThrow(
                 () -> new ServiceException("404-1", "%d번 글은 존재하지 않습니다.".formatted(postId))
@@ -112,7 +112,7 @@ public class ApiV1PostCommentController {
     @Transactional
     public RsData<PostCommentDto> write(@PathVariable long postId,
                                         @RequestBody @Valid PostCommentWriteReqBody reqBody) {
-        Member actor = rq.checkAuthentication();
+        Member actor = rq.getActor();
 
         Post post = postService.findById(postId).orElseThrow(
                 () -> new ServiceException("404-1", "%d번 글은 존재하지 않습니다.".formatted(postId))
